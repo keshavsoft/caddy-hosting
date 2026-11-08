@@ -24,6 +24,7 @@ Instead of maintaining brittle monolithic scripts or wrestling with manual Caddy
 | :--- | :--- | :--- | :--- |
 | **[`caddy-cli`](https://github.com/keshavsoft/caddy-cli)** | Observability & Inspection | [![npm](https://img.shields.io/npm/v/caddy-cli.svg)](https://www.npmjs.com/package/caddy-cli) | `npx caddy-cli -p` |
 | **[`caddy-template`](https://github.com/keshavsoft/caddy-template)** | Route Blueprint Generation | [![npm](https://img.shields.io/npm/v/caddy-template.svg)](https://www.npmjs.com/package/caddy-template) | `npx caddy-template proxy <host> <port>` |
+| **[`caddy-template-knowledge`](https://github.com/keshavsoft/caddy-template-knowledge)** | Permanent Reference Handbook | [GitHub Pages Handbook](https://keshavsoft.github.io/caddy-template-knowledge/) | Reference Manual |
 | **[`caddy-hosting`](https://github.com/keshavsoft/caddy-hosting)** | Ecosystem Hub & Guide | [GitHub Pages Portal](https://keshavsoft.github.io/caddy-hosting/) | Gateway Site |
 | **[`appointment-notifier`](https://github.com/keshavsoft/appointment-notifier)** | Real-world Production App | [GitHub Repo](https://github.com/keshavsoft/appointment-notifier) | Real-time WebSocket clinic calling |
 
@@ -93,3 +94,4 @@ or push dynamically via Caddy's RESTful Admin API (`http://localhost:2019/config
 ## 📄 License
 
 ISC © [KeshavSoft](https://github.com/keshavsoft)
+
