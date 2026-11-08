@@ -1,0 +1,29 @@
+{
+  "name": "caddy-hosting",
+  "version": "1.0.0",
+  "description": "Unified portal and architecture documentation for the KeshavSoft native Caddy JSON hosting ecosystem",
+  "homepage": "https://keshavsoft.github.io/caddy-hosting/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keshavsoft/caddy-hosting.git"
+  },
+  "bugs": {
+    "url": "https://github.com/keshavsoft/caddy-hosting/issues"
+  },
+  "license": "ISC",
+  "author": "KeshavSoft",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "caddy",
+    "caddy-hosting",
+    "caddy-cli",
+    "caddy-template",
+    "reverse-proxy",
+    "websocket",
+    "json",
+    "keshavsoft"
+  ]
+}

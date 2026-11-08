@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeshavSoft Caddy Hosting — The Native Caddy JSON Ecosystem</title>
+  <meta name="description" content="The unified portal and architecture guide for KeshavSoft Caddy hosting micro-tools: caddy-cli, caddy-template, and production workloads.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --card-hover: #26334d;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.25);
+      --secondary: #818cf8;
+      --accent: #34d399;
+      --code-bg: #030712;
+      --header-bg: rgba(9, 13, 22, 0.85);
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --card-hover: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.15);
+      --secondary: #6366f1;
+      --accent: #059669;
+      --code-bg: #0f172a;
+      --header-bg: rgba(248, 250, 252, 0.85);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0.85rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--primary); }
+    .btn-theme {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1100px;
+      margin: 3.5rem auto 2.5rem;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+    .pill-announcement {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 0.35rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .pill-badge {
+      background: var(--accent);
+      color: #032b1a;
+      font-weight: 700;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 span.gradient {
+      background: linear-gradient(135deg, var(--primary), var(--secondary), #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto 2rem;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #041a2b;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px var(--primary-glow);
+    }
+    .btn-secondary {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: var(--card-hover);
+      border-color: var(--primary);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      width: 100%;
+    }
+
+    /* Section Titles */
+    .section-header {
+      text-align: center;
+      margin: 3.5rem 0 2rem;
+    }
+    .section-header h2 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Architecture Visualizer */
+    .arch-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .arch-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, var(--primary-glow) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .arch-inner {
+      position: relative;
+      z-index: 1;
+    }
+    .arch-flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      align-items: stretch;
+    }
+    .flow-step {
+      background: rgba(3, 7, 18, 0.4);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .flow-step:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+    }
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #041a2b;
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+    }
+    .flow-step h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .flow-step p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+    .step-cmd {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--primary);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    /* Ecosystem Repositories Grid */
+    .repo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+    .repo-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .repo-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    .repo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.85rem;
+    }
+    .repo-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .repo-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-npm { background: #cb3837; color: #fff; }
+    .badge-git { background: #334155; color: #f8fafc; }
+    .badge-app { background: #059669; color: #fff; }
+    .repo-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 1.25rem;
+      flex-grow: 1;
+    }
+    .repo-meta {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 0.65rem 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--primary);
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .copy-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+    .copy-btn:hover { color: var(--text); }
+    .repo-links {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .link-pill {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      background: var(--card-hover);
+      border: 1px solid var(--card-border);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .link-pill:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* Interactive 3-Step Playground */
+    .interactive-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-top: 3.5rem;
+    }
+    .tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--card-hover);
+      color: var(--primary);
+      border-color: var(--card-border);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .terminal-box {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .terminal-dots { display: flex; gap: 6px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+    .terminal-body {
+      padding: 1.25rem;
+      overflow-x: auto;
+      color: #e2e8f0;
+      line-height: 1.5;
+      max-height: 380px;
+    }
+    .term-prompt { color: var(--accent); }
+    .term-comment { color: #6b7280; }
+
+    /* Why Caddy JSON Section */
+    .caddy-why {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .why-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+    .why-card h4 {
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+    .why-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--card-border);
+      background: var(--card-bg);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.25rem;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--primary); }
+
+    @media (max-width: 768px) {
+      .hero { margin-top: 2rem; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .header-inner { flex-direction: column; gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <a href="#" class="brand">
+        <span class="brand-badge">KS</span>
+        <span>Caddy Hosting</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#ecosystem" class="nav-link">Ecosystem</a>
+        <a href="#architecture" class="nav-link">Architecture</a>
+        <a href="#workflow" class="nav-link">3-Step Workflow</a>
+        <a href="#why-json" class="nav-link">Why JSON?</a>
+        <a href="https://github.com/keshavsoft" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+        <button id="themeToggle" class="btn-theme" title="Toggle theme">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="pill-announcement">
+      <span class="pill-badge">Ecosystem Hub</span>
+      <span>Unified native Caddy JSON tooling for KeshavSoft cloud hosting</span>
+    </div>
+    <h1>The Modular Architecture for<br><span class="gradient">Native Caddy JSON Hosting</span></h1>
+    <p>
+      Move beyond cumbersome Caddyfiles. KeshavSoft provides fine-grained, single-purpose micro-tools to inspect running server routes, generate zero-downtime JSON blueprints, and manage production cloud workloads.
+    </p>
+    <div class="hero-actions">
+      <a href="#workflow" class="btn btn-primary">
+        <span>⚡ Try 3-Step Hosting</span>
+      </a>
+      <a href="#ecosystem" class="btn btn-secondary">
+        <span>📦 Explore Repositories</span>
+      </a>
+      <a href="https://caddyserver.com/docs/" target="_blank" rel="noopener" class="btn btn-secondary">
+        <span>📖 Official Caddy Docs ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container">
+
+    <!-- Ecosystem Repositories Section -->
+    <section id="ecosystem">
+      <div class="section-header">
+        <h2>The KeshavSoft Caddy Toolkit</h2>
+        <p>Each repository handles one clear responsibility. Together, they form a complete hosting lifecycle.</p>
+      </div>
+
+      <div class="repo-grid">
+        
+        <!-- Repo 1: caddy-cli -->
+        <article class="repo-card">
+          <div class="repo-header">
+            <h3 class="repo-title">
+              <span>🔍</span>
+              <span>caddy-cli</span>
+            </h3>
+            <span class="repo-badge badge-npm">npm v1.2.0</span>
+          </div>
+          <p class="repo-desc">
+            The observability and inspection engine. Recursively parses native Caddy JSON configurations to discover occupied ports, list hostnames, and inspect routes with JSONPath accuracy.
+          </p>
+          <div class="repo-meta">
+            <code>npx caddy-cli -p</code>
+            <button class="copy-btn" onclick="copySnippet('npx caddy-cli -p', this)">Copy</button>
+          </div>
+          <div class="repo-links">
+            <a href="https://www.npmjs.com/package/caddy-cli" target="_blank" rel="noopener" class="link-pill">npm Registry ↗</a>
+            <a href="https://github.com/keshavsoft/caddy-cli" target="_blank" rel="noopener" class="link-pill">GitHub Repo ↗</a>
+            <a href="https://keshavsoft.github.io/caddy-cli/" target="_blank" rel="noopener" class="link-pill">Live Docs ↗</a>
+          </div>
+        </article>
+
+        <!-- Repo 2: caddy-template -->
+        <article class="repo-card">
+          <div class="repo-header">
+            <h3 class="repo-title">
+              <span>📐</span>
+              <span>caddy-template</span>
+            </h3>
+            <span class="repo-badge badge-npm">npm v1.0.0</span>
+          </div>
+          <p class="repo-desc">
+            The route blueprint generator. Outputs schema-compliant, battle-tested Caddy JSON route blocks for unified reverse proxies, WebSocket split routers, static servers, and multi-domain hosts.
+          </p>
+          <div class="repo-meta">
+            <code>npx caddy-template proxy app.example.com 3000</code>
+            <button class="copy-btn" onclick="copySnippet('npx caddy-template proxy app.example.com 3000', this)">Copy</button>
+          </div>
+          <div class="repo-links">
+            <a href="https://www.npmjs.com/package/caddy-template" target="_blank" rel="noopener" class="link-pill">npm Registry ↗</a>
+            <a href="https://github.com/keshavsoft/caddy-template" target="_blank" rel="noopener" class="link-pill">GitHub Repo ↗</a>
+            <a href="https://keshavsoft.github.io/caddy-template/" target="_blank" rel="noopener" class="link-pill">Interactive Generator ↗</a>
+          </div>
+        </article>
+
+        <!-- Repo 3: appointment-notifier -->
+        <article class="repo-card">
+          <div class="repo-header">
+            <h3 class="repo-title">
+              <span>🏥</span>
+              <span>appointment-notifier</span>
+            </h3>
+            <span class="repo-badge badge-app">Production App</span>
+          </div>
+          <p class="repo-desc">
+            Live clinic token calling and appointment notification system. Features WebSocket real-time audio announcements, doctor portals, reception desk, and multi-screen queue displays.
+          </p>
+          <div class="repo-meta">
+            <code>PORT=3000 node app.js</code>
+            <button class="copy-btn" onclick="copySnippet('PORT=3000 node app.js', this)">Copy</button>
+          </div>
+          <div class="repo-links">
+            <a href="https://github.com/keshavsoft/appointment-notifier" target="_blank" rel="noopener" class="link-pill">GitHub Repo ↗</a>
+            <span class="link-pill" style="opacity: 0.7;">WebSocket Ready</span>
+          </div>
+        </article>
+
+        <!-- Repo 4: caddy-hosting -->
+        <article class="repo-card">
+          <div class="repo-header">
+            <h3 class="repo-title">
+              <span>🌐</span>
+              <span>caddy-hosting</span>
+            </h3>
+            <span class="repo-badge badge-git">Ecosystem Hub</span>
+          </div>
+          <p class="repo-desc">
+            The umbrella architecture and gateway site. Unifies all KeshavSoft Caddy modules, documents the hosting lifecycle, and provides deep links directly to upstream Caddyserver documentation.
+          </p>
+          <div class="repo-meta">
+            <code>https://keshavsoft.github.io/caddy-hosting/</code>
+            <button class="copy-btn" onclick="copySnippet('https://keshavsoft.github.io/caddy-hosting/', this)">Copy</button>
+          </div>
+          <div class="repo-links">
+            <a href="https://github.com/keshavsoft/caddy-hosting" target="_blank" rel="noopener" class="link-pill">GitHub Repo ↗</a>
+            <a href="https://caddyserver.com" target="_blank" rel="noopener" class="link-pill">caddyserver.com ↗</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Architecture Visualizer Section -->
+    <section id="architecture">
+      <div class="section-header">
+        <h2>End-to-End Hosting Architecture</h2>
+        <p>How our modular tools interact with your production Caddy instance on the VPS.</p>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-inner">
+          <div class="arch-flow">
+            
+            <div class="flow-step">
+              <div class="step-number">1</div>
+              <h3>Production Server</h3>
+              <p>Your VPS runs Caddy with <code>/etc/caddy/caddy.json</code> managing active SSL certificates and reverse proxies.</p>
+              <div class="step-cmd">systemctl status caddy</div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">2</div>
+              <h3>Inspect with caddy-cli</h3>
+              <p>Run <code>caddy-cli -p</code> to instantly detect occupied ports and open port slots before launching new applications.</p>
+              <div class="step-cmd">npx caddy-cli -p</div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">3</div>
+              <h3>Generate with caddy-template</h3>
+              <p>Produce a guaranteed, valid Caddy JSON route block tailored for WebSocket proxying or static serving.</p>
+              <div class="step-cmd">npx caddy-template proxy &lt;host&gt; &lt;port&gt;</div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">4</div>
+              <h3>Zero-Downtime Reload</h3>
+              <p>Append the JSON route into <code>caddy.json</code> and reload without dropping a single active WebSocket connection.</p>
+              <div class="step-cmd">caddy reload --config caddy.json</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive 3-Step Hosting Workflow Section -->
+    <section id="workflow" class="interactive-section">
+      <div class="section-header" style="margin-top: 0;">
+        <h2>Interactive 3-Step Hosting Workflow</h2>
+        <p>Experience how rapidly a new Node/WebSocket app is brought online.</p>
+      </div>
+
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(0)">Step 1: Check Occupied Ports</button>
+        <button class="tab-btn" onclick="switchTab(1)">Step 2: Generate Route Blueprint</button>
+        <button class="tab-btn" onclick="switchTab(2)">Step 3: Hot Reload VPS</button>
+      </div>
+
+      <!-- Tab 1 -->
+      <div class="tab-panel active" id="tab-0">
+        <div class="terminal-box">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <span>PowerShell / SSH Terminal</span>
+          </div>
+          <div class="terminal-body">
+            <span class="term-comment"># Discover all active ports and upstreams currently configured in Caddy JSON</span><br>
+            <span class="term-prompt">$</span> <strong>npx caddy-cli -p</strong><br><br>
+            Port Mappings in Caddy Configuration:<br>
+            ┌─────────┬────────┬──────────────────────────┬──────────────────────┐<br>
+            │ (index) │  port  │ dial                     │ host                 │<br>
+            ├─────────┼────────┼──────────────────────────┼──────────────────────┤<br>
+            │    0    │ '3001' │ 'localhost:3001'         │ 'quotation.keshavsoft'│<br>
+            │    1    │ '3025' │ 'localhost:3025'         │ 'washtex5.keshavsoft' │<br>
+            │    2    │ '8080' │ 'localhost:8080'         │ 'mani3.keshavsoft'    │<br>
+            │    3    │ '9010' │ 'localhost:9010'         │ 'lab14.keshavsoft'    │<br>
+            │    4    │ '9328' │ 'localhost:9328'         │ 'cc9.keshavsoft'      │<br>
+            └─────────┴────────┴──────────────────────────┴──────────────────────┘<br>
+            <span class="term-comment"># Result: Port 3000 is open and ready for appointment-notifier!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2 -->
+      <div class="tab-panel" id="tab-1">
+        <div class="terminal-box">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <span>Route Blueprint Generator</span>
+          </div>
+          <div class="terminal-body">
+            <span class="term-comment"># Generate a unified HTTP + WebSocket reverse proxy route for port 3000</span><br>
+            <span class="term-prompt">$</span> <strong>npx caddy-template proxy appointment.keshavsoft.com 3000</strong><br><br>
+            <span style="color: #93c5fd;">{</span><br>
+            &nbsp;&nbsp;<span style="color: #6ee7b7;">"match"</span>: [ { <span style="color: #6ee7b7;">"host"</span>: [ <span style="color: #fde047;">"appointment.keshavsoft.com"</span> ] } ],<br>
+            &nbsp;&nbsp;<span style="color: #6ee7b7;">"handle"</span>: [<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #6ee7b7;">"handler"</span>: <span style="color: #fde047;">"subroute"</span>,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #6ee7b7;">"routes"</span>: [<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #6ee7b7;">"handle"</span>: [<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #6ee7b7;">"handler"</span>: <span style="color: #fde047;">"reverse_proxy"</span>,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #6ee7b7;">"upstreams"</span>: [ { <span style="color: #6ee7b7;">"dial"</span>: <span style="color: #fde047;">"localhost:3000"</span> } ]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+            &nbsp;&nbsp;],<br>
+            &nbsp;&nbsp;<span style="color: #6ee7b7;">"terminal"</span>: <span style="color: #f472b6;">true</span><br>
+            <span style="color: #93c5fd;">}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3 -->
+      <div class="tab-panel" id="tab-2">
+        <div class="terminal-box">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <span>VPS Hot Reload</span>
+          </div>
+          <div class="terminal-body">
+            <span class="term-comment"># Option A: Command-line configuration reload</span><br>
+            <span class="term-prompt">root@server:/etc/caddy#</span> <strong>caddy reload --config /etc/caddy/caddy.json</strong><br>
+            2026/11/08 12:30:00.104 INFO  admin  load complete<br><br>
+            <span class="term-comment"># Option B: Direct zero-downtime Admin API push</span><br>
+            <span class="term-prompt">root@server:/etc/caddy#</span> <strong>curl -X POST -H "Content-Type: application/json" -d @route.json http://localhost:2019/config/apps/http/servers/srv0/routes/...</strong><br><br>
+            <span class="term-comment"># Result: Automatic HTTPS certificate issuance &amp; live WebSocket routing!</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Why Native Caddy JSON Section -->
+    <section id="why-json">
+      <div class="section-header">
+        <h2>Why We Standardize on Native Caddy JSON</h2>
+        <p>Caddyfile is an adapter; native JSON is Caddy's true foundational engine.</p>
+      </div>
+
+      <div class="caddy-why">
+        <div class="why-card">
+          <h4>Zero-Downtime Reconfiguration</h4>
+          <p>
+            Native JSON enables Caddy to update routing tables in-memory via the Admin API without terminating active WebSocket streams or dropping live user connections.
+          </p>
+        </div>
+        <div class="why-card">
+          <h4>Programmatic Automation</h4>
+          <p>
+            Unlike plain text configuration files that require regex parsing, native JSON allows tools like <code>caddy-cli</code> and <code>caddy-template</code> to safely read and write configurations.
+          </p>
+        </div>
+        <div class="why-card">
+          <h4>Unrestricted Module Access</h4>
+          <p>
+            Every feature, module, and plugin in Caddy is designed first in JSON. Standardizing on JSON unlocks 100% of Caddy's architectural capabilities.
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Want to learn more about Caddy's native architecture? 
+          <a href="https://caddyserver.com/docs/architecture" target="_blank" rel="noopener" style="color: var(--primary); text-decoration: underline;">
+            Read the official Caddyserver Architecture Guide ↗
+          </a>
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <strong>KeshavSoft Caddy Hosting Ecosystem</strong> • Open Source Tools under ISC License
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/keshavsoft" target="_blank" rel="noopener">KeshavSoft GitHub</a>
+        <a href="https://www.npmjs.com/~keshavsoft" target="_blank" rel="noopener">KeshavSoft npm</a>
+        <a href="https://caddyserver.com" target="_blank" rel="noopener">caddyserver.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Tab switching
+    function switchTab(idx) {
+      const tabs = document.querySelectorAll('.tab-btn');
+      const panels = document.querySelectorAll('.tab-panel');
+      tabs.forEach((t, i) => t.classList.toggle('active', i === idx));
+      panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+    }
+
+    // Snippet copy
+    function copySnippet(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    // Theme Toggle
+    const themeBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const storedTheme = localStorage.getItem('ks-caddy-theme') || 'dark';
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('ks-caddy-theme', theme);
+      themeIcon.innerText = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    setTheme(storedTheme);
+
+    themeBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  </script>
+
+</body>
+</html>
